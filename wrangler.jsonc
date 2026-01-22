@@ -1,0 +1,13 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "drishti-digital-library",
+  "compatibility_date": "2026-01-22",
+  "pages_build_output_dir": "./dist",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "vars": {
+    "SUPABASE_URL": "https://ytsdcglnbxpybdfnucjn.supabase.co",
+    "SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0c2RjZ2xuYnhweWJkZm51Y2puIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNTc4MjQsImV4cCI6MjA4MTczMzgyNH0.k23-pdsw4fqRUMXp3-MMG1strgQa_J8hGBMlE1HATwg"
+  }
+}
