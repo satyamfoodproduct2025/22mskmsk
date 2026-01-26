@@ -21,19 +21,22 @@ A modern, responsive self-study center website with admin panel built with Hono 
 - 🎠 Hero Slider with dynamic slides
 - ⏰ Study Shifts display (Morning, Noon, Evening, Night)
 - 🏢 Premium facilities showcase (AC, WiFi, CCTV, RO Water, etc.)
+- 💰 **Pricing Section** with dynamic pricing plans (Single Shift, Double Shift, Full Day)
 - 📸 Dynamic photo gallery
 - 📝 Contact form with database storage
 - 🗺️ Google Maps integration
 - 📱 Fully responsive (same 2-column grid on mobile)
-- 💚 Floating WhatsApp button
+- 💚 Floating WhatsApp button (links to WhatsApp from Social Links)
 - 🔗 Dynamic social media links
+- 🔐 **Login Button** that opens Admin Panel URL (configurable)
 
 ### Admin Panel Features
 - 🔐 Secure login system
 - 🖼️ Manage hero slides (add/edit/delete)
+- 💰 **Manage Pricing Plans** (add/edit/delete plans with features, prices, popular badge)
 - 📷 Manage gallery images
-- ⚙️ Update site settings (name, logo, phone, address, map)
-- 🔗 Manage social media links
+- ⚙️ Update site settings (name, logo, phone, address, map, **Admin Panel URL**)
+- 🔗 Manage social media links (WhatsApp link used for floating button)
 - 📬 View contact form submissions
 - 🔑 Change admin password
 
@@ -156,7 +159,26 @@ CREATE TABLE IF NOT EXISTS contact_submissions (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- 7. Enable Row Level Security
+-- 7. Pricing Plans Table
+CREATE TABLE IF NOT EXISTS pricing_plans (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    price INTEGER NOT NULL,
+    duration VARCHAR(50) DEFAULT '/month',
+    features JSONB NOT NULL DEFAULT '[]',
+    is_popular BOOLEAN DEFAULT false,
+    is_full BOOLEAN DEFAULT false,
+    order_num INTEGER DEFAULT 1,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insert default pricing plans
+INSERT INTO pricing_plans (name, price, duration, features, is_popular, is_full, order_num) VALUES 
+    ('Single Shift', 500, '/month', '["4 Hours Daily", "AC Room", "WiFi Access", "Fixed Seat"]', false, false, 1),
+    ('Double Shift', 900, '/month', '["8 Hours Daily", "AC Room", "WiFi Access", "Fixed Seat", "Locker Facility"]', true, false, 2),
+    ('Full Day', 1500, '/month', '["16 Hours Daily", "AC Room", "WiFi Access", "Fixed Seat", "Locker Facility", "Free Newspapers"]', false, true, 3);
+
+-- 8. Enable Row Level Security
 ALTER TABLE admin_users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE site_settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE hero_slides ENABLE ROW LEVEL SECURITY;
@@ -164,13 +186,17 @@ ALTER TABLE gallery_images ENABLE ROW LEVEL SECURITY;
 ALTER TABLE social_links ENABLE ROW LEVEL SECURITY;
 ALTER TABLE contact_submissions ENABLE ROW LEVEL SECURITY;
 
--- 8. Create policies
+-- 9. Enable RLS for pricing_plans
+ALTER TABLE pricing_plans ENABLE ROW LEVEL SECURITY;
+
+-- 10. Create policies
 CREATE POLICY "Allow all for admin_users" ON admin_users FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Allow all for site_settings" ON site_settings FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Allow all for hero_slides" ON hero_slides FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Allow all for gallery_images" ON gallery_images FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Allow all for social_links" ON social_links FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Allow all for contact_submissions" ON contact_submissions FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow all for pricing_plans" ON pricing_plans FOR ALL USING (true) WITH CHECK (true);
 ```
 
 ## 🚀 Cloudflare Deployment
@@ -219,6 +245,10 @@ npx wrangler pages deploy dist --project-name drishti-digital-library
 | `/api/slides` | POST | Add new slide |
 | `/api/slides/:id` | PUT | Update slide |
 | `/api/slides/:id` | DELETE | Delete slide |
+| `/api/pricing` | GET | Get pricing plans |
+| `/api/pricing` | POST | Add pricing plan |
+| `/api/pricing/:id` | PUT | Update pricing plan |
+| `/api/pricing/:id` | DELETE | Delete pricing plan |
 | `/api/gallery` | GET | Get gallery images |
 | `/api/gallery` | POST | Add gallery image |
 | `/api/gallery/:id` | PUT | Update image |
